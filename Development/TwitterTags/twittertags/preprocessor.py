@@ -11,6 +11,7 @@ class TweetPreprocessor(object):
         self.hashtags_and_replies = [word for word in self.tweet if len(word) > 0
                                      and (word[0] == '#' or word[0] == '@')]
         self.tweet = [word for word in self.tweet if word not in self.hashtags_and_replies]
+        print(self.tweet)
         self.__encode()
         self.__remove_numbers()
         self.__to_lowercase()
@@ -42,12 +43,10 @@ class TweetPreprocessor(object):
     def __remove_punctuations(self):
         """ Remove punctuation signs """
         punctuation_signs = set(string.punctuation)
+        print(len(self.tweet))
         for word_index in range(len(self.tweet)):
-            if self.tweet[word_index][0] == '#':
-                beginning_sign = '#'
-            else:
-                beginning_sign = self.tweet[word_index][0] if self.tweet[word_index][0] not in punctuation_signs else ''
-            self.tweet[word_index] = [beginning_sign] + [y for y in self.tweet[word_index][1:] if y not in punctuation_signs]
+            print(self.tweet[word_index])
+            self.tweet[word_index] = [x for x in self.tweet[word_index] if x not in punctuation_signs]
             if len(self.tweet[word_index]) == 0:
                 del(self.tweet[word_index])
             else:
@@ -55,7 +54,7 @@ class TweetPreprocessor(object):
 
     def __remove_small_words(self):
         """ Remove words with length less than 3"""
-        self.tweet = [word for word in self.tweet if self.tweet[0] == '#' or not len(word) < 3]
+        self.tweet = [word for word in self.tweet if not len(word) < 3]
 
     def __remove_stopwords(self):
         """ Remove stopwords (most common, function words """
@@ -64,7 +63,7 @@ class TweetPreprocessor(object):
         self.tweet = [word for word in self.tweet if word not in stopwords]
 
     def __make_stemming(self):
-        self.tweet = [porter2.stem(word) if word[0] != '#' else word for word in self.tweet]
+        self.tweet = [porter2.stem(word) for word in self.tweet]
 
     @staticmethod
     def is_url(word):
@@ -78,7 +77,7 @@ class TweetPreprocessor(object):
 
 
 if __name__ == "__main__":
-    tweet = "New Your tries to make EU a pretty\u2026 #panda"
+    tweet = "New Your tries to make EU a pr3tty #panda"
     pre = TweetPreprocessor(tweet)
     # print(pre.is_url("https://t.co/c66r8Mbr4I"))
     print(pre.tweet)

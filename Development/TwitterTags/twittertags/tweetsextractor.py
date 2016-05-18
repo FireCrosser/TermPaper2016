@@ -44,7 +44,7 @@ class TweetsExtractor:
         return data
 
     def get_timeline_by_user_screen_name(self, screen_name='fakealexpotter', size_of_window=300, amount_of_requests=15):
-        since_id = 0
+        max_id = 0
         result_tweets = []
         for i in range(amount_of_requests):
             if i == 0:
@@ -52,10 +52,10 @@ class TweetsExtractor:
                                     "screen_name={screen_name}&count={count}"\
                     .format(screen_name=screen_name, count=size_of_window)
             else:
-                since_id += size_of_window
+                max_id += size_of_window
                 request_token_url = "https://api.twitter.com/1.1/statuses/user_timeline.json?" \
-                                    "screen_name={screen_name}&count={count}&since_id={since_id}"\
-                    .format(screen_name=screen_name, count=size_of_window, since_id=since_id)
+                                    "screen_name={screen_name}&count={count}&max_id={max_id}"\
+                    .format(screen_name=screen_name, count=size_of_window, max_id=max_id)
             resp, byte_content = self.client.request(request_token_url, "GET")
             content = byte_content.decode("utf-8")
             tweets_data = json.loads(content)
@@ -80,6 +80,6 @@ class TweetsExtractor:
 if __name__ == "__main__":
     tweets_extractor = TweetsExtractor(consumer_key="1bDsHjtrQ6yWJ7ZQK0Xf2lVfB",
                                         consumer_secret="Ncyt95C3kiSKRQZPZSjURMMe5K7FzV3eirB4fkRQxg0Pe0JgTW")
-    data = tweets_extractor.get_timeline_by_user_screen_name('NBA', 250, 50)
-    tweets_extractor.save_to_file('json_data/users_tweets.json', data)
+    data = tweets_extractor.get_timeline_by_user_screen_name('NBA', 300, 10)
+    tweets_extractor.save_to_file('json_data/users_tweets_small.json', data)
 

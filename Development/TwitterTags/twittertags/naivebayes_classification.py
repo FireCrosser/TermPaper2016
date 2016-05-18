@@ -11,7 +11,7 @@ class BayesClassificator(object):
         self.number_of_hashtags = number_of_hashtags
         self.all_haghtags = self.__get_all_hashtags()
 
-    def get_hashtags(self):
+    def get_recommended_hashtags(self):
         classifications = {}
         result = []
         for hashtag in self.all_haghtags:
