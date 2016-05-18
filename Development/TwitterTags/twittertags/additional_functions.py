@@ -37,6 +37,10 @@ def word_weight(word):
         return 1 + 0.1*len(word)
 
 
+def get_hashtags_of_tweet(tweet):
+    return [word for word in tweet if word[0] == '#']
+
+
 def __get_max_values_of_dict(dictionary, amount=3):
     sorted_tuples = ((k, dictionary[k]) for k in sorted(dictionary, key=dictionary.get, reverse=True))
     result = {}
