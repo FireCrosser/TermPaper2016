@@ -10,10 +10,10 @@ from pprint import pprint
 
 
 class TweetsExtractor:
-
     stopwords = set(nltk.corpus.stopwords.words('english'))
 
-    def __init__(self, consumer_key, consumer_secret):
+    def __init__(self, consumer_key="1bDsHjtrQ6yWJ7ZQK0Xf2lVfB",
+                 consumer_secret="Ncyt95C3kiSKRQZPZSjURMMe5K7FzV3eirB4fkRQxg0Pe0JgTW"):
         self.key = consumer_key
         self.secret = consumer_secret
         self.consumer = oauth.Consumer(key=self.key,
@@ -28,13 +28,6 @@ class TweetsExtractor:
         return data
         # pprint(data)
 
-    def get_tweet_by_id(self, tweet_id=0):
-        request_token_url = "https://api.twitter.com/1.1/statuses/show.json?id={id}".format(id=tweet_id)
-        resp, byte_content = self.client.request(request_token_url, "GET")
-        content = byte_content.decode()
-        data = json.loads(content)
-        return data
-
     def get_timeline_by_user_id(self, user_id=12345):
         request_token_url = "https://api.twitter.com/1.1/statuses/user_timeline.json?" \
                             "user_id={user_id}".format(user_id=user_id)
@@ -43,25 +36,25 @@ class TweetsExtractor:
         data = json.loads(content)
         return data
 
-    def get_timeline_by_user_screen_name(self, screen_name='fakealexpotter', size_of_window=300, amount_of_requests=15):
+    def get_timeline_by_user_screen_name(self, screen_name='NBA', size_of_window=300, amount_of_requests=15):
         max_id = 0
         result_tweets = []
         for i in range(amount_of_requests):
             if i == 0:
                 request_token_url = "https://api.twitter.com/1.1/statuses/user_timeline.json?" \
-                                    "screen_name={screen_name}&count={count}"\
+                                    "screen_name={screen_name}&count={count}" \
                     .format(screen_name=screen_name, count=size_of_window)
             else:
                 max_id += size_of_window
                 request_token_url = "https://api.twitter.com/1.1/statuses/user_timeline.json?" \
-                                    "screen_name={screen_name}&count={count}&max_id={max_id}"\
+                                    "screen_name={screen_name}&count={count}&max_id={max_id}" \
                     .format(screen_name=screen_name, count=size_of_window, max_id=max_id)
             resp, byte_content = self.client.request(request_token_url, "GET")
             content = byte_content.decode("utf-8")
             tweets_data = json.loads(content)
             result_tweets += [(tweet['id'], tweet['text']) for tweet in tweets_data]
             max_id = result_tweets[-1][0]
-        return result_tweets
+        return [entry[1] for entry in result_tweets]
 
     @staticmethod
     def __convert_json_to_tweets(json_data):
@@ -79,7 +72,6 @@ class TweetsExtractor:
 
 if __name__ == "__main__":
     tweets_extractor = TweetsExtractor(consumer_key="1bDsHjtrQ6yWJ7ZQK0Xf2lVfB",
-                                        consumer_secret="Ncyt95C3kiSKRQZPZSjURMMe5K7FzV3eirB4fkRQxg0Pe0JgTW")
-    data = tweets_extractor.get_timeline_by_user_screen_name('NBA', 300, 10)
-    tweets_extractor.save_to_file('json_data/users_tweets_small.json', data)
-
+                                       consumer_secret="Ncyt95C3kiSKRQZPZSjURMMe5K7FzV3eirB4fkRQxg0Pe0JgTW")
+    data = tweets_extractor.get_timeline_by_user_screen_name('TheAcademy', 100, 10)
+    tweets_extractor.save_to_file('json_data/users_tweets.json', data)

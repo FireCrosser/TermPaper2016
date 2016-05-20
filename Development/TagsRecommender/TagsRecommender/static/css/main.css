@@ -1,0 +1,19 @@
+textarea {
+    resize: none;
+}
+
+.content{
+    width: 60%;
+    margin: 0 auto;
+}
+
+.inside *{
+    /*display: block;*/
+    /*margin-left: 50px;*/
+}
+
+.tag-form{
+    margin: 0 auto;
+    display: inline-block;
+    padding: 0 50px;
+}

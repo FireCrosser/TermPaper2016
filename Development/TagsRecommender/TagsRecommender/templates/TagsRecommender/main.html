@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tags generator</title>
+    <link rel="stylesheet" href="/TagsRecommender/static/bootstrap-3.3.6-dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/TagsRecommender/static/bootstrap-3.3.6-dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/TagsRecommender/static/css/main.css"/>
+</head>
+<body>
+<div class="row content">
+    <div class="jumbotron inside">
+        <form action="/gettags/" method="post"> {% csrf_token %}
+            <div class="tag-form">
+                <div class="row">
+                    <div class="form-group">
+                        <input class="form-control " type="text" placeholder="Screen Name">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                <textarea class="form-control" maxlength="140" cols="40" rows="4"
+                          placeholder="Type your tweet"></textarea>
+                    </div>
+                </div>
+                <button class="btn btn-primary">Generate tags</button>
+            </div>
+            <div class="row">
+                <!--<div class="form-group">-->
+                <!--<p class="text-primary small">#WARRIORSvTHUNDER #NBAvine #NBARapidReplay</p>-->
+                <!--</div>-->
+            </div>
+            {% if 0 == 0 %}
+
+            {% endif %}
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

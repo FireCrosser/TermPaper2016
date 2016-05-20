@@ -1,13 +1,13 @@
 import operator
 
-from twittertags import additional_functions
+from TagsRecommender.core import additional_functions
 
 
 class BayesClassificator(object):
 
-    def __init__(self, tweet_words=[], all_tweets=[], number_of_hashtags=3):
+    def __init__(self, tweet_words=[], all_tweets=[], number_of_hashtags=4):
         self.tweet_words = tweet_words
-        self.all_tweets = all_tweets
+        self.similar_tweets = additional_functions.similar_tweets(self.tweet_words, all_tweets)
         self.number_of_hashtags = number_of_hashtags
         self.all_haghtags = self.__get_all_hashtags()
 
@@ -31,17 +31,17 @@ class BayesClassificator(object):
     def __cond_probability(self, word, hashtag):
         # amount of tweets where word and hashtag occur together
         prob_count = 0
-        for tweet in self.all_tweets:
+        for tweet in self.similar_tweets:
             if word in tweet and hashtag in tweet:
                 prob_count += 1
-        return prob_count/len(self.all_tweets)
+        return prob_count/len(self.similar_tweets)
 
     def __hashtag_probability(self, hashtag):
         return self.all_haghtags[hashtag]/len(self.all_haghtags)
 
     def __get_all_hashtags(self):
         hashtags_res = {}
-        for tweet in self.all_tweets:
+        for tweet in self.similar_tweets:
             for hashtag in additional_functions.get_hashtags_of_tweet(tweet):
                 if hashtag in hashtags_res:
                     hashtags_res[hashtag] += 1

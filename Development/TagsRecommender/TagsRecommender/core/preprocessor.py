@@ -8,11 +8,10 @@ from stemming import porter2
 class TweetPreprocessor(object):
     def __init__(self, tweet="This is my 5-th tweet!"):
         self.tweet = tweet.split(' ')
-        self.hashtags_and_replies = [word for word in self.tweet if len(word) > 0
-                                     and (word[0] == '#' or word[0] == '@')]
-        self.tweet = [word for word in self.tweet if word not in self.hashtags_and_replies]
-        print(self.tweet)
-        self.__encode()
+        self.hashtags = [word for word in self.tweet if len(word) > 0 and word[0] == '#']
+        self.replies = [word for word in self.tweet if len(word) > 0 and word[0] == '@']
+        # self.tweet = [word for word in self.tweet if word not in self.hashtags_and_replies]
+        # self.__encode()
         self.__remove_numbers()
         self.__to_lowercase()
         self.__remove_urls()
@@ -20,10 +19,8 @@ class TweetPreprocessor(object):
         self.__remove_stopwords()
         self.__remove_punctuations()
         self.__make_stemming()
-        # print(self.tweet)
-        # print(self.hashtags)
-        self.tweet += self.hashtags_and_replies
-        # print(self.tweet)
+        self.__clean_hashtags()
+        self.tweet += self.hashtags + self.replies
 
     def __encode(self):
         for word_index in range(len(self.tweet)):
@@ -43,14 +40,12 @@ class TweetPreprocessor(object):
     def __remove_punctuations(self):
         """ Remove punctuation signs """
         punctuation_signs = set(string.punctuation)
-        print(len(self.tweet))
+        temp_tweet = []
         for word_index in range(len(self.tweet)):
-            print(self.tweet[word_index])
-            self.tweet[word_index] = [x for x in self.tweet[word_index] if x not in punctuation_signs]
-            if len(self.tweet[word_index]) == 0:
-                del(self.tweet[word_index])
-            else:
-                self.tweet[word_index] = ''.join(self.tweet[word_index])
+            word = [x for x in self.tweet[word_index] if x not in punctuation_signs]
+            if len(word) != 0:
+                temp_tweet.append(''.join(word))
+        self.tweet = temp_tweet
 
     def __remove_small_words(self):
         """ Remove words with length less than 3"""
@@ -65,6 +60,19 @@ class TweetPreprocessor(object):
     def __make_stemming(self):
         self.tweet = [porter2.stem(word) for word in self.tweet]
 
+    def __clean_hashtags(self):
+        punctuation_signs = set(string.punctuation)
+        cleaned_tags = []
+        for tag in self.hashtags:
+            cleaned_tag = []
+            for ch in tag[1:]:
+                if (ch in punctuation_signs and ch != '_') or ch.rstrip() == '':
+                    break
+                cleaned_tag.append(ch)
+            cleaned_tags.append('#' + ''.join(cleaned_tag))
+        self.hashtags = cleaned_tags
+
+
     @staticmethod
     def is_url(word):
         if re.match('^(?!www | www\.)[A-Za-z0-9_-]+\.+[A-Za-z0-9.\/%&=\?_:;-]+$', word) or \
@@ -77,7 +85,7 @@ class TweetPreprocessor(object):
 
 
 if __name__ == "__main__":
-    tweet = "New Your tries to make EU a pr3tty #panda"
+    tweet = "New Your tries to make EU a pr3tty #panda_fg*http #kfc\ngf"
     pre = TweetPreprocessor(tweet)
     # print(pre.is_url("https://t.co/c66r8Mbr4I"))
     print(pre.tweet)
